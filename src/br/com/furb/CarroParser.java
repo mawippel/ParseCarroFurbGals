@@ -1,99 +1,62 @@
 package br.com.furb;
 
-import java.util.regex.Matcher;
+import java.util.ArrayList;
 
-import br.com.furb.exception.AtributoInvalidoException;
-import br.com.furb.exception.CombustivelInvalidoException;
-import br.com.furb.exception.SimboloInvalidoException;
-import br.com.furb.exception.ValorInvalidoException;
+import br.com.furb.gals.LexicalError;
+import br.com.furb.gals.Lexico;
+import br.com.furb.gals.Token;
 
 public class CarroParser {
 
-	public static Carro processar(String entrada) {
+	public static StringBuilder processar(String entrada) throws LexicalError {
+		ArrayList<String> result = new ArrayList<>();
 		Carro carro = new Carro();
 		int i = 0;
-		for (String line : entrada.split("\n|\r\n")) {
-			++i;
-			for (String word : line.split("\\s")) {
-				if (word.trim().isEmpty()) {
-					continue;
-				}
-
-				// VALIDAÇÕES
-				Matcher matcherNumber = CompilerPatterns.VERIFY_NUMBER.getPattern().matcher(word);
-				if (matcherNumber.find()) { // verifica se é um número
-					validateNumber(carro, word, i);
-					continue;
-				} 
-
-				Matcher matcherSymbol = CompilerPatterns.VERIFY_VALID_SYMBOL.getPattern().matcher(word);
-				if (matcherSymbol.find()) { // verifica se é um simbolo válido
-					validateSymbol(carro, word, i);
-					continue;
-				} 
-
-				// Se não entrar nem no Number, nem no Symbol, é um simbolo inválido
-				throw new SimboloInvalidoException(i, word);
-			}
+		
+		Lexico lexico = new Lexico();
+	    Token token = null;
+	    
+	    for (String line : entrada.split("\n|\r\n")) {
+	    	++i; // incrementa a linha, para aparecer no stack
+			lexico.setInput(line);
+	    	while ((token = lexico.nextToken()) != null) {
+				StringBuilder sb = new StringBuilder().append(i).append("   ").append(token.getLexeme()).append("   ")
+						.append(getNameById(carro, token.getId()));
+	    		result.add(sb.toString());
+	    	}
+	    }
+	    
+		StringBuilder sb = new StringBuilder().append("Dados analisados").append(System.getProperty("line.separator"));
+		for (String string : result) {
+			sb.append(string).append(System.getProperty("line.separator"));
 		}
-		return carro;
+	    
+		return sb;
 	}
 
-	private static void validateNumber(Carro carro, String word, int lineNumber) {
-		Matcher matcherZeroBefore = CompilerPatterns.CHECK_ZERO_BEFORE.getPattern().matcher(word);
-		if (matcherZeroBefore.find()) {
-			throw new AtributoInvalidoException(lineNumber, word);
+	private static String getNameById(Carro carro, int id) {
+		switch (id) {
+		case 2: // é motor
+			return "Motor";
+		case 3: // é ano
+			return "Ano";
+		case 4: // é valor
+			return "Valor";
+		case 5: // é km
+			return "KM";
+		case 6: // é chassi
+			return "Chassi";
+		case 7: // é placa
+			return "Placa";
+		case 8: // é marcaModelo
+			return "Marca ou Modelo";
+		case 9: // é alcool
+		case 10: // é bicombustivel
+		case 11: // é diesel
+		case 12: // é gasolina
+			return "Combustível";
 		}
-
-		// valida o Motor
-		Matcher matcherNumber = CompilerPatterns.CHECK_ENGINE.getPattern().matcher(word);
-		if (matcherNumber.matches()) {
-			carro.addQtdMotor();
-			return;
-		}
-
-		// valida o Ano
-		matcherNumber = CompilerPatterns.CHECK_YEAR.getPattern().matcher(word);
-		if (matcherNumber.matches()) {
-			carro.addQtdAno();
-			return;
-		}
-
-		// valida o KM
-		matcherNumber = CompilerPatterns.CHECK_KM.getPattern().matcher(word);
-		if (matcherNumber.matches()) {
-			if(200000 >= Integer.parseInt(word.replace(".", ""))){
-				carro.addQtdKm();
-				return;
-			}
-		}
-
-		throw new AtributoInvalidoException(lineNumber, word);
+		return "";
 	}
-
-	private static void validateSymbol(Carro carro, String word, int lineNumber) {
-		// Valida o combustível
-		if (checkPattern(CompilerPatterns.VERIFY_COMB, word)) {
-			if(checkPattern(CompilerPatterns.CHECK_COMB, word)){
-				carro.addQtdCombustivel();
-			} else {
-				throw new CombustivelInvalidoException(lineNumber, word);
-			}
-		}
-		// Valida o Valor
-		if (checkPattern(CompilerPatterns.VERIFY_MONEY, word)) {
-			if(checkPattern(CompilerPatterns.CHECK_MONEY, word) && !checkPattern(CompilerPatterns.CHECK_ZERO_BEFORE, word)){
-				carro.addQtdValor();
-			} else {
-				throw new ValorInvalidoException(lineNumber, word);
-			}
-		}
-	}
-	
-	private static boolean checkPattern(CompilerPatterns compilerPattern, String word){
-		Matcher matcher = compilerPattern.getPattern().matcher(word);
-		return matcher.find();
-	}
-
 
 }

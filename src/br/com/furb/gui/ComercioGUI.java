@@ -1,19 +1,14 @@
 package br.com.furb.gui;
 
-import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
-
-import br.com.furb.Carro;
-import br.com.furb.CarroParser;
-import br.com.furb.exception.ParseCarroException;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.UnsupportedLookAndFeelException;
 
-/**
- *
- * @author mhraymundo
- */
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
+
+import br.com.furb.CarroParser;
+
 public class ComercioGUI extends javax.swing.JFrame {
 
     public ComercioGUI() {
@@ -120,8 +115,7 @@ public class ComercioGUI extends javax.swing.JFrame {
 		}
 
     	try {
-    		Carro carro = CarroParser.processar(this.txtAreaEntrada.getText());
-    		txtSaida.setText(carro.toString());
+    		txtSaida.setText(CarroParser.processar(this.txtAreaEntrada.getText()).toString());
 		} catch (Exception e) {
 			txtSaida.setText(e.getMessage());
 		}
