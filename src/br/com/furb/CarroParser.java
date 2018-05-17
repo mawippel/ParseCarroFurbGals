@@ -12,25 +12,25 @@ public class CarroParser {
 		ArrayList<String> result = new ArrayList<>();
 		Carro carro = new Carro();
 		int i = 0;
-		
+
 		Lexico lexico = new Lexico();
-	    Token token = null;
-	    
-	    for (String line : entrada.split("\n|\r\n")) {
-	    	++i; // incrementa a linha, para aparecer no stack
+		Token token = null;
+
+		for (String line : entrada.split("\n|\r\n")) {
+			++i; // incrementa a linha, para aparecer no stack
 			lexico.setInput(line);
-	    	while ((token = lexico.nextToken()) != null) {
+			while ((token = lexico.nextToken(i)) != null) {
 				StringBuilder sb = new StringBuilder().append(i).append("   ").append(token.getLexeme()).append("   ")
 						.append(getNameById(carro, token.getId()));
-	    		result.add(sb.toString());
-	    	}
-	    }
-	    
+				result.add(sb.toString());
+			}
+		}
+
 		StringBuilder sb = new StringBuilder().append("Dados analisados").append(System.getProperty("line.separator"));
 		for (String string : result) {
 			sb.append(string).append(System.getProperty("line.separator"));
 		}
-	    
+
 		return sb;
 	}
 

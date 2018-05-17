@@ -22,7 +22,7 @@ public class Lexico implements Constants {
 		position = pos;
 	}
 
-	public Token nextToken() throws LexicalError {
+	public Token nextToken(int line) throws LexicalError {
 		if (!hasInput())
 			return null;
 
@@ -47,15 +47,19 @@ public class Lexico implements Constants {
 				}
 			}
 		}
-		if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
-			throw new LexicalError(SCANNER_ERROR[lastState], start);
+		if (endState < 0 || (endState != state && tokenForState(lastState) == -2)){
+			String message = String.format("erro na linha %d - %s: bla", line, SCANNER_ERROR[lastState]);
+			throw new LexicalError(message);
+			//throw new LexicalError(SCANNER_ERROR[lastState], start);
+		}
+			
 
 		position = end;
 
 		int token = tokenForState(endState);
 
 		if (token == 0)
-			return nextToken();
+			return nextToken(line);
 		else {
 			String lexeme = input.substring(start, end);
 			token = lookupToken(token, lexeme);

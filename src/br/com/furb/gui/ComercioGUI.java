@@ -118,6 +118,7 @@ public class ComercioGUI extends javax.swing.JFrame {
     		txtSaida.setText(CarroParser.processar(this.txtAreaEntrada.getText()).toString());
 		} catch (Exception e) {
 			txtSaida.setText(e.getMessage());
+			e.printStackTrace();
 		}
     }
 
