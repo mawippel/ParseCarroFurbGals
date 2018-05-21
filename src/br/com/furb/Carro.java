@@ -14,7 +14,7 @@ public class Carro {
 	
 	/**
 	 * Construtor com todos os atributos
-	 * @param qtdMotor
+	 * @param qtdMotorr
 	 * @param qtdAno
 	 * @param qtdKm
 	 * @param qtdValor
