@@ -52,13 +52,16 @@ public class Lexico implements Constants {
 			if (index == -1) {
 				index = input.length() - 1; //índice de fim de linha
 			}
-			String teste = input.substring(start, index + 1);
-//			if (teste = "R$") {
-//				
-//			}
+			String word = input.substring(start, index + 1);
+			if ("R$".equals(word.trim())) {
+				int nextSpace = input.indexOf(" ", index + 1);
+				if (nextSpace == -1) {
+					nextSpace = input.length(); //índice de fim de linha
+				}
+				word = word + input.substring(index + 1, nextSpace);
+			}
 			
-			
-			String message = String.format("erro na linha %d - %s: %s", line, SCANNER_ERROR[lastState], teste);
+			String message = String.format("erro na linha %d - %s: %s", line, SCANNER_ERROR[lastState], word);
 			throw new LexicalError(message);
 			//throw new LexicalError(SCANNER_ERROR[lastState], start);
 		}
