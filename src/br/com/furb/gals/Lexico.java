@@ -48,7 +48,17 @@ public class Lexico implements Constants {
 			}
 		}
 		if (endState < 0 || (endState != state && tokenForState(lastState) == -2)){
-			String message = String.format("erro na linha %d - %s: bla", line, SCANNER_ERROR[lastState]);
+			int index = input.indexOf(" ", start);
+			if (index == -1) {
+				index = input.length() - 1; //índice de fim de linha
+			}
+			String teste = input.substring(start, index + 1);
+//			if (teste = "R$") {
+//				
+//			}
+			
+			
+			String message = String.format("erro na linha %d - %s: %s", line, SCANNER_ERROR[lastState], teste);
 			throw new LexicalError(message);
 			//throw new LexicalError(SCANNER_ERROR[lastState], start);
 		}
