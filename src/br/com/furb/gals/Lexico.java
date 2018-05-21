@@ -61,6 +61,10 @@ public class Lexico implements Constants {
 				word = word + input.substring(index + 1, nextSpace);
 			}
 			
+			if ("KM inválido".equals(SCANNER_ERROR[lastState]) && !word.contains("km")) {
+				word = word + "km";
+			}
+			
 			String message = String.format("erro na linha %d - %s: %s", line, SCANNER_ERROR[lastState], word);
 			throw new LexicalError(message);
 			//throw new LexicalError(SCANNER_ERROR[lastState], start);
