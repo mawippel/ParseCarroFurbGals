@@ -49,25 +49,27 @@ public class Lexico implements Constants {
 		}
 		if (endState < 0 || (endState != state && tokenForState(lastState) == -2)){
 			int index = input.indexOf(" ", start);
-			if (index == -1) {
-				index = input.length() - 1; //índice de fim de linha
+			if (index == -1) { //caso seja a última palavra da linha
+				index = input.length() - 1;
 			}
 			String word = input.substring(start, index + 1);
+			
+			//Se for um erro de Valor inválido, deve pegar a String 'R$' + 'Valor'
 			if ("R$".equals(word.trim())) {
 				int nextSpace = input.indexOf(" ", index + 1);
-				if (nextSpace == -1) {
-					nextSpace = input.length(); //índice de fim de linha
+				if (nextSpace == -1) { //caso seja a última palavra da linha
+					nextSpace = input.length();
 				}
 				word = word + input.substring(index + 1, nextSpace);
 			}
 			
+			//Caso o erro seja de KM Inválido, deve adicionar o 'km' atrás da kilometragem
 			if ("KM inválido".equals(SCANNER_ERROR[lastState]) && !word.contains("km")) {
 				word = word + "km";
 			}
 			
 			String message = String.format("erro na linha %d - %s: %s", line, SCANNER_ERROR[lastState], word);
 			throw new LexicalError(message);
-			//throw new LexicalError(SCANNER_ERROR[lastState], start);
 		}
 			
 
